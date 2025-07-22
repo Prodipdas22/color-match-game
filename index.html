@@ -117,16 +117,11 @@
   <div id="buttons"></div>
   <div id="msg"></div>
   <button onclick="startGame()" class="restart-btn">Restart Game</button>
+  <audio id="rightSound" src="right.mp3"></audio>
+  <audio id="wrongSound" src="wrong.mp3"></audio>
+  
 
-
-  <audio controls>
-    <source id="rightSound" src="right.mp3" type="audio/mpeg">
-    <source id="wrongSound"src="wrong.mp3" type="audio/mpeg">
-  </audio>
-  <!-- Sound Effects: (Open Source/CC0 from Pixabay) -->
-  <!--<audio id="rightSound" src="right.mp3"></audio>
-  <audio id="wrongSound" src="wrong.mp3"></audio>-->
-
+  
   <script>
     // --- Game Settings ---
     const colors = [
