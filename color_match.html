@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Color Match Game</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+      padding: 10px;
+      background: #fafbff;
+    }
+    #highscore { margin: 8px; font-size: 20px; color: #141C3A; }
+    #score { margin: 12px; font-size: 22px;}
+    #timer { font-size: 22px; color: #f44336; margin-bottom: 13px;}
+    #level { margin-bottom: 15px; font-size: 18px; color: #666;}
+    #shape {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 28px;
+      border-radius: 20px;
+      border: 2px solid #333;
+      transition: background 0.15s;
+    }
+    #buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 24px;
+    }
+    #buttons button {
+      width: 100px;
+      height: 60px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      box-shadow: 2px 2px 4px #00000022;
+      background: #f3f3f3;
+      transition: background 0.12s, transform 0.12s;
+      position: relative;
+      outline: none;
+    }
+    #buttons button:active {
+      background: #ddd;
+    }
+    #msg { margin: 12px; font-size: 18px; color: #444;}
+    button.restart-btn {
+      margin-top: 10px;
+      width: 130px;
+      height: 45px;
+      background: #2196f3;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button.restart-btn:active {
+      background: #1769aa;
+    }
+    /* Animation classes */
+    .correct {
+      animation: correctPulse 0.4s;
+      background: #8bc34a !important;
+      color: #fff !important;
+    }
+    .wrong {
+      animation: wrongShake 0.35s;
+      background: #f44336 !important;
+      color: #fff !important;
+    }
+    @keyframes correctPulse {
+      0% { transform: scale(1);}
+      60% { transform: scale(1.18);}
+      100% { transform: scale(1);}
+    }
+    @keyframes wrongShake {
+      0% { transform: translateX(0);}
+      20% { transform: translateX(-10px);}
+      40% { transform: translateX(10px);}
+      60% { transform: translateX(-7px);}
+      80% { transform: translateX(7px);}
+      100% { transform: translateX(0);}
+    }
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      body {
+        margin-top: 30px;
+        padding: 8px;
+      }
+      #shape {
+        width: 88px;
+        height: 88px;
+        margin-bottom: 17px;
+      }
+      #buttons button {
+        width: 84px;
+        height: 48px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="highscore">High Score: 0</div>
+  <div id="score">Score: 0</div>
+  <div id="level">Level: 1</div>
+  <div id="timer">Timer: 5</div>
+  <div id="shape"></div>
+  <div id="buttons"></div>
+  <div id="msg"></div>
+  <button onclick="startGame()" class="restart-btn">Restart Game</button>
+
+  <!-- Sound Effects: (Open Source/CC0 from Pixabay) -->
+  <audio id="rightSound" src="Sound/right.mp3"></audio>
+  <audio id="wrongSound" src="Sound/wrong.mp3"></audio>
+
+  <script>
+    // --- Game Settings ---
+    const colors = [
+      { name: "Red", code: "#f44336" },
+      { name: "Blue", code: "#2196f3" },
+      { name: "Green", code: "#4caf50" },
+      { name: "Yellow", code: "#ffeb3b" },
+      { name: "Purple", code: "#9c27b0" },
+      { name: "Orange", code: "#ff9800" },
+      { name: "Pink", code: "#e91e63" },
+      { name: "Cyan", code: "#00bcd4" }
+    ];
+
+    let targetColor, score, timerInterval, timeLeft;
+    let timePerRound;
+    let numButtons;
+    let currentLevel;
+    const maxButtons = 6;
+
+    // --- High Score Tracking ---
+    let highScore = 0;
+    function updateHighScore() {
+      if (typeof(Storage) !== "undefined") {
+        let stored = localStorage.getItem("matchHighScore");
+        if (stored) highScore = Math.max(highScore, parseInt(stored));
+        highScore = Math.max(highScore, score);
+        localStorage.setItem("matchHighScore", highScore);
+      } else {
+        highScore = Math.max(highScore, score);
+      }
+      document.getElementById('highscore').textContent = "High Score: " + highScore;
+    }
+
+    // --- Difficulty Progression ---
+    function updateDifficulty(score) {
+      if (score >= 15) {
+        timePerRound = 2; numButtons = 6; currentLevel = 4;
+      } else if (score >= 10) {
+        timePerRound = 3; numButtons = 5; currentLevel = 3;
+      } else if (score >= 5) {
+        timePerRound = 4; numButtons = 5; currentLevel = 2;
+      } else {
+        timePerRound = 5; numButtons = 4; currentLevel = 1;
+      }
+      document.getElementById("level").textContent = "Level: " + currentLevel;
+    }
+
+    function randomInt(max) { return Math.floor(Math.random() * max); }
+
+    function nextRound() {
+      updateDifficulty(score); // Adjust difficulty before round starts
+      clearInterval(timerInterval);
+
+      // -- Timer Setup
+      timeLeft = timePerRound;
+      document.getElementById('timer').textContent = "Timer: " + timeLeft;
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = "Timer: " + timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          playSound(false);
+          endGame("⏰ Time's up! Final Score: " + score);
+        }
+      }, 1000);
+
+      // -- Pick new color and create shape
+      targetColor = colors[randomInt(colors.length)];
+      document.getElementById('shape').style.background = targetColor.code;
+
+      // -- Shuffle and select color options
+      let options = [...colors];
+      options = options.sort(() => 0.5 - Math.random()).slice(0, numButtons);
+      if (!options.some(opt => opt.name === targetColor.name)) {
+        options[randomInt(options.length)] = targetColor;
+      }
+      options = options.sort(() => 0.5 - Math.random());
+
+      // -- Render color buttons
+      const btnDiv = document.getElementById('buttons');
+      btnDiv.innerHTML = '';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.textContent = opt.name;
+        btn.onclick = function() { checkAnswer(opt.name, btn); };
+        btnDiv.appendChild(btn);
+      });
+      document.getElementById('msg').textContent = '';
+    }
+
+    function playSound(correct) {
+      try {
+        if (correct) {
+          document.getElementById('rightSound').currentTime = 0;
+          document.getElementById('rightSound').play();
+        } else {
+          document.getElementById('wrongSound').currentTime = 0;
+          document.getElementById('wrongSound').play();
+        }
+      } catch (e) {}
+    }
+
+    function animateButton(btn, correct) {
+      btn.classList.remove('correct', 'wrong');
+      // Trigger reflow
+      void btn.offsetWidth;
+      btn.classList.add(correct ? 'correct' : 'wrong');
+    }
+
+    function checkAnswer(answer, clickedBtn) {
+      const btns = document.querySelectorAll('#buttons button');
+      let foundBtn = clickedBtn || Array.from(btns).find(btn => btn.textContent === answer);
+      if (answer === targetColor.name) {
+        playSound(true);
+        animateButton(foundBtn, true);
+        setTimeout(() => {
+          score++;
+          document.getElementById('score').textContent = "Score: " + score;
+          nextRound();
+        }, 390);
+      } else {
+        playSound(false);
+        animateButton(foundBtn, false);
+        setTimeout(() => {
+          endGame("❌ Game Over! Final Score: " + score);
+        }, 350);
+      }
+    }
+
+    function endGame(message) {
+      clearInterval(timerInterval);
+      document.getElementById('msg').textContent = message;
+      document.getElementById('buttons').innerHTML = '';
+      document.getElementById('timer').textContent = "Timer: 0";
+      updateHighScore();
+    }
+
+    function startGame() {
+      score = 0;
+      currentLevel = 1;
+      document.getElementById('score').textContent = "Score: 0";
+      document.getElementById('level').textContent = "Level: 1";
+      document.getElementById('msg').textContent = "";
+      updateHighScore();
+      nextRound();
+    }
+
+    // On load, load high score and start game
+    window.onload = () => {
+      score = 0;
+      if (typeof(Storage) !== "undefined" && localStorage.getItem("matchHighScore")) {
+        highScore = parseInt(localStorage.getItem("matchHighScore")) || 0;
+      }
+      updateHighScore();
+      startGame();
+    };
+  </script>
+</body>
+</html>
