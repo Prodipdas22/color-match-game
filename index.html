@@ -1,161 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Color Match Game</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Color Blast Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    /* Body and layout */
     body {
-      font-family: Arial;
+      font-family: 'Montserrat', 'Poppins', Arial, sans-serif;
+      background: linear-gradient(135deg, #f4faff 0%, #e3ecff 100%);
+      margin: 0;
+      min-height: 100vh;
+      padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 50px;
-      padding: 10px;
-      background: #fafbff;
+      justify-content: flex-start;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    #highscore { margin: 8px; font-size: 20px; color: #141C3A; }
-    #score { margin: 12px; font-size: 22px;}
-    #timer { font-size: 22px; color: #f44336; margin-bottom: 13px;}
-    #level { margin-bottom: 15px; font-size: 18px; color: #666;}
+    /* Header */
+    header {
+      width: 100%;
+      background: #2196f3;
+      color: #fff;
+      padding: 20px 0 10px;
+      box-shadow: 0 2px 8px #0001;
+      margin-bottom: 18px;
+      user-select: none;
+    }
+    header h1 {
+      text-align: center;
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 0 0 12px 0;
+    }
+    .header-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    #highscore, #score, #level, #timer {
+      background: #1976d2;
+      border-radius: 7px;
+      padding: 5px 14px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      min-width: 100px;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* Main game container */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 340px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 16px #0002;
+      padding: 24px 18px 36px 18px;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+
+    /* Shape */
     #shape {
       width: 120px;
       height: 120px;
-      margin-bottom: 28px;
-      border-radius: 20px;
-      border: 2px solid #333;
-      transition: background 0.15s;
+      margin: 0 0 22px 0;
+      border-radius: 25px;
+      border: 3px solid #2196f3;
+      transition: background 0.15s, border 0.18s;
+      box-shadow: 0 2px 8px #2196f344;
+      background: #fafbff;
     }
+
+    /* Buttons container */
     #buttons {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 15px;
-      margin-bottom: 24px;
+      gap: 16px;
+      margin-bottom: 20px;
+      width: 100%;
     }
+
+    /* Buttons */
     #buttons button {
-      width: 100px;
-      height: 60px;
-      font-size: 20px;
+      min-width: 110px;
+      height: 54px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 500;
+      color: #fff;
       cursor: pointer;
-      margin-bottom: 10px;
-      box-shadow: 2px 2px 4px #00000022;
-      background: #f3f3f3;
-      transition: background 0.12s, transform 0.12s;
-      position: relative;
+      box-shadow: 0 2px 7px #00000022;
       outline: none;
+      transition: transform 0.09s, box-shadow 0.09s, background 0.18s;
+      position: relative;
+      user-select: none;
     }
     #buttons button:active {
-      background: #ddd;
+      transform: scale(0.96);
+      box-shadow: 0 0 0 #0000;
     }
-    #msg { margin: 12px; font-size: 18px; color: #444;}
-    button.restart-btn {
-      margin-top: 10px;
-      width: 130px;
-      height: 45px;
-      background: #2196f3;
-      color: white;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
+    /* Focus styles for accessibility */
+    #buttons button:focus {
+      outline: 3px solid #2196f3;
+      outline-offset: 3px;
     }
-    button.restart-btn:active {
-      background: #1769aa;
-    }
-    /* Animation classes */
+
+    /* Animated feedback */
     .correct {
-      animation: correctPulse 0.4s;
-      background: #8bc34a !important;
-      color: #fff !important;
+      animation: correctPulse 0.37s;
+      background: #43c464 !important;
     }
     .wrong {
-      animation: wrongShake 0.35s;
+      animation: wrongShake 0.37s;
       background: #f44336 !important;
-      color: #fff !important;
     }
     @keyframes correctPulse {
       0% { transform: scale(1);}
-      60% { transform: scale(1.18);}
+      60% { transform: scale(1.15);}
       100% { transform: scale(1);}
     }
     @keyframes wrongShake {
       0% { transform: translateX(0);}
-      20% { transform: translateX(-10px);}
-      40% { transform: translateX(10px);}
-      60% { transform: translateX(-7px);}
-      80% { transform: translateX(7px);}
+      25% { transform: translateX(-7px);}
+      50% { transform: translateX(7px);}
+      75% { transform: translateX(-5px);}
       100% { transform: translateX(0);}
     }
-    /* Responsive adjustments */
+
+    /* Message box */
+    #msg {
+      min-height: 36px;
+      font-size: 18px;
+      color: #2196f3;
+      text-align: center;
+      margin: 10px 0 7px 0;
+      letter-spacing: 0.2px;
+      font-weight: 500;
+      user-select: none;
+    }
+
+    /* Big action buttons (Start, Pause, Resume) */
+    .big-action-btn {
+      margin: 8px 6px 0 6px;
+      width: 140px;
+      height: 48px;
+      background: linear-gradient(90deg, #42a5f5, #1976d2);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px #1976d266;
+      cursor: pointer;
+      transition: background .15s;
+      user-select: none;
+    }
+    .big-action-btn:active {
+      background: #1565c0;
+    }
+
+    /* Restart button */
+    .restart-btn {
+      margin-top: 12px;
+      width: 140px;
+      height: 44px;
+      background: linear-gradient(90deg, #2196f3, #1565c0);
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px #1565c066;
+      cursor: pointer;
+      transition: background 0.18s;
+      user-select: none;
+      display: none; /* initially hidden */
+    }
+    .restart-btn:active {
+      background: #0d47a1;
+    }
+
+    /* Responsive */
     @media (max-width: 480px) {
-      body {
-        margin-top: 30px;
-        padding: 8px;
+      header h1 { font-size: 1.5rem; }
+      .header-row { gap: 10px; }
+      #highscore, #score, #level, #timer {
+        min-width: 80px;
+        font-size: 0.9rem;
+        padding: 4px 8px;
       }
-      #shape {
-        width: 88px;
-        height: 88px;
-        margin-bottom: 17px;
-      }
-      #buttons button {
-        width: 84px;
-        height: 48px;
-        font-size: 16px;
-      }
+      main { max-width: 95vw; padding: 18px 15px 28px 15px; }
+      #shape { width: 90px; height: 90px; border-radius: 20px; }
+      #buttons button { min-width: 84px; height: 40px; font-size: 14px;}
+      .big-action-btn { width: 120px; height: 44px; font-size: 18px; }
+      .restart-btn { width: 120px; height: 40px; font-size: 16px; }
     }
   </style>
 </head>
 <body>
-  <div id="highscore">High Score: 0</div>
-  <div id="score">Score: 0</div>
-  <div id="level">Level: 1</div>
-  <div id="timer">Timer: 5</div>
-  <div id="shape"></div>
-  <div id="buttons"></div>
-  <div id="msg"></div>
-  <button onclick="startGame()" class="restart-btn">Restart Game</button>
-  <audio id="rightSound" src="right.mp3"></audio>
-  <audio id="wrongSound" src="wrong.mp3"></audio>
-  
+  <header>
+    <h1>Color Match</h1>
+    <div class="header-row" role="region" aria-label="Game scores and status">
+      <div id="highscore" aria-live="polite">High Score: 0</div>
+      <div id="score" aria-live="polite">Score: 0</div>
+      <div id="level" aria-live="polite">Level: 1</div>
+      <div id="timer" aria-live="polite">Timer: 5</div>
+    </div>
+  </header>
+  <main>
+    <div id="shape" role="img" aria-label="Game color shape"></div>
+    <div id="buttons" role="list"></div>
+    <div id="msg" aria-live="assertive" aria-atomic="true"></div>
 
-  
+    <button id="startBtn" class="big-action-btn" aria-label="Start game">Start Game</button>
+    <button id="pauseBtn" class="big-action-btn" style="display:none;" aria-label="Pause game">Pause</button>
+    <button id="resumeBtn" class="big-action-btn" style="display:none;" aria-label="Resume game">Resume</button>
+    <button id="restartBtn" class="restart-btn" aria-label="Restart game">Restart Game</button>
+  </main>
+
+  <!-- Audio: local files right.mp3 and wrong.mp3 should be in same folder -->
+  <audio id="rightSound" src="right.mp3" preload="auto"></audio>
+  <audio id="wrongSound" src="wrong.mp3" preload="auto"></audio>
+
   <script>
-    // --- Game Settings ---
     const colors = [
-      { name: "Red", code: "#f44336" },
-      { name: "Blue", code: "#2196f3" },
-      { name: "Green", code: "#4caf50" },
-      { name: "Yellow", code: "#ffeb3b" },
-      { name: "Purple", code: "#9c27b0" },
-      { name: "Orange", code: "#ff9800" },
-      { name: "Pink", code: "#e91e63" },
-      { name: "Cyan", code: "#00bcd4" }
+      { name: "Red", code: "#d30000", symbol: "●" },
+      { name: "Blue", code: "#2196f3", symbol: "▲" },
+      { name: "Green", code: "#4caf50", symbol: "■" },
+      { name: "Yellow", code: "#ffeb3b", symbol: "◆" },
+      { name: "Purple", code: "#9c27b0", symbol: "⬟" },
+      { name: "Orange", code: "#ff9800", symbol: "⬤" },
+      { name: "Pink", code: "#ff46a2", symbol: "★" },
+      { name: "Cyan", code: "#00bcd4", symbol: "⬨" }
     ];
 
-    let targetColor, score, timerInterval, timeLeft;
-    let timePerRound;
-    let numButtons;
-    let currentLevel;
+    let targetColor, score = 0, timerInterval, timeLeft;
+    let timePerRound, numButtons, currentLevel;
     const maxButtons = 6;
 
-    // --- High Score Tracking ---
     let highScore = 0;
-    function updateHighScore() {
-      if (typeof(Storage) !== "undefined") {
-        let stored = localStorage.getItem("matchHighScore");
-        if (stored) highScore = Math.max(highScore, parseInt(stored));
-        highScore = Math.max(highScore, score);
-        localStorage.setItem("matchHighScore", highScore);
+    let inGame = false;
+    let paused = false;
+
+    // Element refs
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resumeBtn = document.getElementById('resumeBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    function loadHighScore() {
+      const saved = localStorage.getItem("matchHighScore");
+      if (saved !== null && !isNaN(saved)) {
+        highScore = parseInt(saved, 10);
       } else {
-        highScore = Math.max(highScore, score);
+        highScore = 0;
       }
       document.getElementById('highscore').textContent = "High Score: " + highScore;
     }
 
-    // --- Difficulty Progression ---
+    function saveHighScore() {
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("matchHighScore", highScore);
+      }
+      document.getElementById('highscore').textContent = "High Score: " + highScore;
+    }
+
     function updateDifficulty(score) {
       if (score >= 15) {
         timePerRound = 2; numButtons = 6; currentLevel = 4;
@@ -169,30 +292,55 @@
       document.getElementById("level").textContent = "Level: " + currentLevel;
     }
 
-    function randomInt(max) { return Math.floor(Math.random() * max); }
+    function randomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
 
-    function nextRound() {
-      updateDifficulty(score); // Adjust difficulty before round starts
-      clearInterval(timerInterval);
+    function playSound(correct) {
+      try {
+        if (correct) {
+          const right = document.getElementById('rightSound');
+          right.currentTime = 0;
+          right.play();
+        } else {
+          const wrong = document.getElementById('wrongSound');
+          wrong.currentTime = 0;
+          wrong.play();
+        }
+      } catch(e) {}
+    }
 
-      // -- Timer Setup
-      timeLeft = timePerRound;
-      document.getElementById('timer').textContent = "Timer: " + timeLeft;
-      timerInterval = setInterval(() => {
+    function animateButton(btn, correct) {
+      btn.classList.remove('correct', 'wrong');
+      void btn.offsetWidth;  // reflow to restart animation
+      btn.classList.add(correct ? 'correct' : 'wrong');
+    }
+
+    function timerTick() {
+      if (!paused) {
         timeLeft--;
         document.getElementById('timer').textContent = "Timer: " + timeLeft;
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
           playSound(false);
-          endGame("⏰ Time's up! Final Score: " + score);
+          endGame(`⏰ Time's up! Final Score: ${score}`);
         }
-      }, 1000);
+      }
+    }
 
-      // -- Pick new color and create shape
+    function nextRound() {
+      updateDifficulty(score);
+      clearInterval(timerInterval);
+
+      timeLeft = timePerRound;
+      document.getElementById('timer').textContent = "Timer: " + timeLeft;
+      timerInterval = setInterval(timerTick, 1000);
+
       targetColor = colors[randomInt(colors.length)];
-      document.getElementById('shape').style.background = targetColor.code;
+      const shape = document.getElementById('shape');
+      shape.style.background = targetColor.code;
+      shape.setAttribute('aria-label', `Colored shape: ${targetColor.name}`);
 
-      // -- Shuffle and select color options
       let options = [...colors];
       options = options.sort(() => 0.5 - Math.random()).slice(0, numButtons);
       if (!options.some(opt => opt.name === targetColor.name)) {
@@ -200,43 +348,27 @@
       }
       options = options.sort(() => 0.5 - Math.random());
 
-      // -- Render color buttons
       const btnDiv = document.getElementById('buttons');
       btnDiv.innerHTML = '';
       options.forEach(opt => {
         const btn = document.createElement('button');
-        btn.textContent = opt.name;
-        btn.onclick = function() { checkAnswer(opt.name, btn); };
+        btn.innerHTML = `<span aria-label="${opt.name} color">${opt.name} ${opt.symbol}</span>`;
+        btn.style.background = opt.code;
+        btn.style.color = (opt.name.toLowerCase() === 'yellow') ? '#222' : '#fff';
+        btn.setAttribute('role', 'listitem');
+        btn.onclick = () => {
+          if (!paused && inGame) checkAnswer(opt.name, btn);
+        };
         btnDiv.appendChild(btn);
       });
+
       document.getElementById('msg').textContent = '';
     }
 
-    function playSound(correct) {
-      try {
-        if (correct) {
-          document.getElementById('rightSound').currentTime = 0;
-          document.getElementById('rightSound').play();
-        } else {
-          document.getElementById('wrongSound').currentTime = 0;
-          document.getElementById('wrongSound').play();
-        }
-      } catch (e) {}
-    }
-
-    function animateButton(btn, correct) {
-      btn.classList.remove('correct', 'wrong');
-      // Trigger reflow
-      void btn.offsetWidth;
-      btn.classList.add(correct ? 'correct' : 'wrong');
-    }
-
     function checkAnswer(answer, clickedBtn) {
-      const btns = document.querySelectorAll('#buttons button');
-      let foundBtn = clickedBtn || Array.from(btns).find(btn => btn.textContent === answer);
       if (answer === targetColor.name) {
         playSound(true);
-        animateButton(foundBtn, true);
+        animateButton(clickedBtn, true);
         setTimeout(() => {
           score++;
           document.getElementById('score').textContent = "Score: " + score;
@@ -244,39 +376,550 @@
         }, 390);
       } else {
         playSound(false);
-        animateButton(foundBtn, false);
+        animateButton(clickedBtn, false);
         setTimeout(() => {
-          endGame("❌ Game Over! Final Score: " + score);
+          endGame(`❌ Game Over! Final Score: ${score}`);
         }, 350);
       }
     }
 
     function endGame(message) {
       clearInterval(timerInterval);
+      inGame = false;
+      paused = false;
+      saveHighScore();
       document.getElementById('msg').textContent = message;
       document.getElementById('buttons').innerHTML = '';
       document.getElementById('timer').textContent = "Timer: 0";
-      updateHighScore();
+      pauseBtn.style.display = "none";
+      resumeBtn.style.display = "none";
+      restartBtn.style.display = "inline-block";
     }
 
     function startGame() {
       score = 0;
       currentLevel = 1;
+      inGame = true;
+      paused = false;
       document.getElementById('score').textContent = "Score: 0";
       document.getElementById('level').textContent = "Level: 1";
       document.getElementById('msg').textContent = "";
-      updateHighScore();
+      restartBtn.style.display = "none";
+      pauseBtn.style.display = "inline-block";
+      resumeBtn.style.display = "none";
       nextRound();
     }
 
-    // On load, load high score and start game
-    window.onload = () => {
-      score = 0;
-      if (typeof(Storage) !== "undefined" && localStorage.getItem("matchHighScore")) {
-        highScore = parseInt(localStorage.getItem("matchHighScore")) || 0;
-      }
-      updateHighScore();
+    // Button event listeners
+    startBtn.addEventListener('click', () => {
+      startBtn.style.display = "none";
       startGame();
+    });
+
+    pauseBtn.addEventListener('click', () => {
+      if (!paused && inGame) {
+        paused = true;
+        clearInterval(timerInterval);
+        pauseBtn.style.display = "none";
+        resumeBtn.style.display = "inline-block";
+        document.getElementById('msg').textContent = "⏸ Paused";
+      }
+    });
+
+    resumeBtn.addEventListener('click', () => {
+      if (paused && inGame) {
+        paused = false;
+        resumeBtn.style.display = "none";
+        pauseBtn.style.display = "inline-block";
+        document.getElementById('msg').textContent = "";
+        timerInterval = setInterval(timerTick, 1000);
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      restartBtn.style.display = "none";
+      pauseBtn.style.display = "inline-block";
+      startGame();
+    });
+
+    // Initialize on load
+    window.onload = () => {
+      loadHighScore();
+      startBtn.style.display = "inline-block";
+      pauseBtn.style.display = "none";
+      resumeBtn.style.display = "none";
+      restartBtn.style.display = "none";
+
+      // Clear UI
+      document.getElementById('score').textContent = "Score: 0";
+      document.getElementById('level').textContent = "Level: 1";
+      document.getElementById('timer').textContent = "Timer: 0";
+      document.getElementById('shape').style.background = '#fafbff';
+      document.getElementById('buttons').innerHTML = '';
+      document.getElementById('msg').textContent = "Press Start to begin!";
+    };
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Color Blast Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Body and layout */
+    body {
+      font-family: 'Montserrat', 'Poppins', Arial, sans-serif;
+      background: linear-gradient(135deg, #f4faff 0%, #e3ecff 100%);
+      margin: 0;
+      min-height: 100vh;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    /* Header */
+    header {
+      width: 100%;
+      background: #2196f3;
+      color: #fff;
+      padding: 20px 0 10px;
+      box-shadow: 0 2px 8px #0001;
+      margin-bottom: 18px;
+      user-select: none;
+    }
+    header h1 {
+      text-align: center;
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 0 0 12px 0;
+    }
+    .header-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    #highscore, #score, #level, #timer {
+      background: #1976d2;
+      border-radius: 7px;
+      padding: 5px 14px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      min-width: 100px;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* Main game container */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 340px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 16px #0002;
+      padding: 24px 18px 36px 18px;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+
+    /* Shape */
+    #shape {
+      width: 120px;
+      height: 120px;
+      margin: 0 0 22px 0;
+      border-radius: 25px;
+      border: 3px solid #2196f3;
+      transition: background 0.15s, border 0.18s;
+      box-shadow: 0 2px 8px #2196f344;
+      background: #fafbff;
+    }
+
+    /* Buttons container */
+    #buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    /* Buttons */
+    #buttons button {
+      min-width: 110px;
+      height: 54px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 2px 7px #00000022;
+      outline: none;
+      transition: transform 0.09s, box-shadow 0.09s, background 0.18s;
+      position: relative;
+      user-select: none;
+    }
+    #buttons button:active {
+      transform: scale(0.96);
+      box-shadow: 0 0 0 #0000;
+    }
+    /* Focus styles for accessibility */
+    #buttons button:focus {
+      outline: 3px solid #2196f3;
+      outline-offset: 3px;
+    }
+
+    /* Animated feedback */
+    .correct {
+      animation: correctPulse 0.37s;
+      background: #43c464 !important;
+    }
+    .wrong {
+      animation: wrongShake 0.37s;
+      background: #f44336 !important;
+    }
+    @keyframes correctPulse {
+      0% { transform: scale(1);}
+      60% { transform: scale(1.15);}
+      100% { transform: scale(1);}
+    }
+    @keyframes wrongShake {
+      0% { transform: translateX(0);}
+      25% { transform: translateX(-7px);}
+      50% { transform: translateX(7px);}
+      75% { transform: translateX(-5px);}
+      100% { transform: translateX(0);}
+    }
+
+    /* Message box */
+    #msg {
+      min-height: 36px;
+      font-size: 18px;
+      color: #2196f3;
+      text-align: center;
+      margin: 10px 0 7px 0;
+      letter-spacing: 0.2px;
+      font-weight: 500;
+      user-select: none;
+    }
+
+    /* Big action buttons (Start, Pause, Resume) */
+    .big-action-btn {
+      margin: 8px 6px 0 6px;
+      width: 140px;
+      height: 48px;
+      background: linear-gradient(90deg, #42a5f5, #1976d2);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px #1976d266;
+      cursor: pointer;
+      transition: background .15s;
+      user-select: none;
+    }
+    .big-action-btn:active {
+      background: #1565c0;
+    }
+
+    /* Restart button */
+    .restart-btn {
+      margin-top: 12px;
+      width: 140px;
+      height: 44px;
+      background: linear-gradient(90deg, #2196f3, #1565c0);
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px #1565c066;
+      cursor: pointer;
+      transition: background 0.18s;
+      user-select: none;
+      display: none; /* initially hidden */
+    }
+    .restart-btn:active {
+      background: #0d47a1;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.5rem; }
+      .header-row { gap: 10px; }
+      #highscore, #score, #level, #timer {
+        min-width: 80px;
+        font-size: 0.9rem;
+        padding: 4px 8px;
+      }
+      main { max-width: 95vw; padding: 18px 15px 28px 15px; }
+      #shape { width: 90px; height: 90px; border-radius: 20px; }
+      #buttons button { min-width: 84px; height: 40px; font-size: 14px;}
+      .big-action-btn { width: 120px; height: 44px; font-size: 18px; }
+      .restart-btn { width: 120px; height: 40px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Color Match</h1>
+    <div class="header-row" role="region" aria-label="Game scores and status">
+      <div id="highscore" aria-live="polite">High Score: 0</div>
+      <div id="score" aria-live="polite">Score: 0</div>
+      <div id="level" aria-live="polite">Level: 1</div>
+      <div id="timer" aria-live="polite">Timer: 5</div>
+    </div>
+  </header>
+  <main>
+    <div id="shape" role="img" aria-label="Game color shape"></div>
+    <div id="buttons" role="list"></div>
+    <div id="msg" aria-live="assertive" aria-atomic="true"></div>
+
+    <button id="startBtn" class="big-action-btn" aria-label="Start game">Start Game</button>
+    <button id="pauseBtn" class="big-action-btn" style="display:none;" aria-label="Pause game">Pause</button>
+    <button id="resumeBtn" class="big-action-btn" style="display:none;" aria-label="Resume game">Resume</button>
+    <button id="restartBtn" class="restart-btn" aria-label="Restart game">Restart Game</button>
+  </main>
+
+  <!-- Audio: local files right.mp3 and wrong.mp3 should be in same folder -->
+  <audio id="rightSound" src="sound/right.mp3" preload="auto"></audio>
+  <audio id="wrongSound" src="sound/wrong.mp3" preload="auto"></audio>
+
+  <script>
+    const colors = [
+      { name: "Red", code: "#d30000", symbol: "●" },
+      { name: "Blue", code: "#2196f3", symbol: "▲" },
+      { name: "Green", code: "#4caf50", symbol: "■" },
+      { name: "Yellow", code: "#ffeb3b", symbol: "◆" },
+      { name: "Purple", code: "#9c27b0", symbol: "⬟" },
+      { name: "Orange", code: "#ff9800", symbol: "⬤" },
+      { name: "Pink", code: "#ff46a2", symbol: "★" },
+      { name: "Cyan", code: "#00bcd4", symbol: "⬨" }
+    ];
+
+    let targetColor, score = 0, timerInterval, timeLeft;
+    let timePerRound, numButtons, currentLevel;
+    const maxButtons = 6;
+
+    let highScore = 0;
+    let inGame = false;
+    let paused = false;
+
+    // Element refs
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resumeBtn = document.getElementById('resumeBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    function loadHighScore() {
+      const saved = localStorage.getItem("matchHighScore");
+      if (saved !== null && !isNaN(saved)) {
+        highScore = parseInt(saved, 10);
+      } else {
+        highScore = 0;
+      }
+      document.getElementById('highscore').textContent = "High Score: " + highScore;
+    }
+
+    function saveHighScore() {
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("matchHighScore", highScore);
+      }
+      document.getElementById('highscore').textContent = "High Score: " + highScore;
+    }
+
+    function updateDifficulty(score) {
+      if (score >= 15) {
+        timePerRound = 2; numButtons = 6; currentLevel = 4;
+      } else if (score >= 10) {
+        timePerRound = 3; numButtons = 5; currentLevel = 3;
+      } else if (score >= 5) {
+        timePerRound = 4; numButtons = 5; currentLevel = 2;
+      } else {
+        timePerRound = 5; numButtons = 4; currentLevel = 1;
+      }
+      document.getElementById("level").textContent = "Level: " + currentLevel;
+    }
+
+    function randomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    function playSound(correct) {
+      try {
+        if (correct) {
+          const right = document.getElementById('rightSound');
+          right.currentTime = 0;
+          right.play();
+        } else {
+          const wrong = document.getElementById('wrongSound');
+          wrong.currentTime = 0;
+          wrong.play();
+        }
+      } catch(e) {}
+    }
+
+    function animateButton(btn, correct) {
+      btn.classList.remove('correct', 'wrong');
+      void btn.offsetWidth;  // reflow to restart animation
+      btn.classList.add(correct ? 'correct' : 'wrong');
+    }
+
+    function timerTick() {
+      if (!paused) {
+        timeLeft--;
+        document.getElementById('timer').textContent = "Timer: " + timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          playSound(false);
+          endGame(`⏰ Time's up! Final Score: ${score}`);
+        }
+      }
+    }
+
+    function nextRound() {
+      updateDifficulty(score);
+      clearInterval(timerInterval);
+
+      timeLeft = timePerRound;
+      document.getElementById('timer').textContent = "Timer: " + timeLeft;
+      timerInterval = setInterval(timerTick, 1000);
+
+      targetColor = colors[randomInt(colors.length)];
+      const shape = document.getElementById('shape');
+      shape.style.background = targetColor.code;
+      shape.setAttribute('aria-label', `Colored shape: ${targetColor.name}`);
+
+      let options = [...colors];
+      options = options.sort(() => 0.5 - Math.random()).slice(0, numButtons);
+      if (!options.some(opt => opt.name === targetColor.name)) {
+        options[randomInt(options.length)] = targetColor;
+      }
+      options = options.sort(() => 0.5 - Math.random());
+
+      const btnDiv = document.getElementById('buttons');
+      btnDiv.innerHTML = '';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.innerHTML = `<span aria-label="${opt.name} color">${opt.name} ${opt.symbol}</span>`;
+        btn.style.background = opt.code;
+        btn.style.color = (opt.name.toLowerCase() === 'yellow') ? '#222' : '#fff';
+        btn.setAttribute('role', 'listitem');
+        btn.onclick = () => {
+          if (!paused && inGame) checkAnswer(opt.name, btn);
+        };
+        btnDiv.appendChild(btn);
+      });
+
+      document.getElementById('msg').textContent = '';
+    }
+
+    function checkAnswer(answer, clickedBtn) {
+      if (answer === targetColor.name) {
+        playSound(true);
+        animateButton(clickedBtn, true);
+        setTimeout(() => {
+          score++;
+          document.getElementById('score').textContent = "Score: " + score;
+          nextRound();
+        }, 390);
+      } else {
+        playSound(false);
+        animateButton(clickedBtn, false);
+        setTimeout(() => {
+          endGame(`❌ Game Over! Final Score: ${score}`);
+        }, 350);
+      }
+    }
+
+    function endGame(message) {
+      clearInterval(timerInterval);
+      inGame = false;
+      paused = false;
+      saveHighScore();
+      document.getElementById('msg').textContent = message;
+      document.getElementById('buttons').innerHTML = '';
+      document.getElementById('timer').textContent = "Timer: 0";
+      pauseBtn.style.display = "none";
+      resumeBtn.style.display = "none";
+      restartBtn.style.display = "inline-block";
+    }
+
+    function startGame() {
+      score = 0;
+      currentLevel = 1;
+      inGame = true;
+      paused = false;
+      document.getElementById('score').textContent = "Score: 0";
+      document.getElementById('level').textContent = "Level: 1";
+      document.getElementById('msg').textContent = "";
+      restartBtn.style.display = "none";
+      pauseBtn.style.display = "inline-block";
+      resumeBtn.style.display = "none";
+      nextRound();
+    }
+
+    // Button event listeners
+    startBtn.addEventListener('click', () => {
+      startBtn.style.display = "none";
+      startGame();
+    });
+
+    pauseBtn.addEventListener('click', () => {
+      if (!paused && inGame) {
+        paused = true;
+        clearInterval(timerInterval);
+        pauseBtn.style.display = "none";
+        resumeBtn.style.display = "inline-block";
+        document.getElementById('msg').textContent = "⏸ Paused";
+      }
+    });
+
+    resumeBtn.addEventListener('click', () => {
+      if (paused && inGame) {
+        paused = false;
+        resumeBtn.style.display = "none";
+        pauseBtn.style.display = "inline-block";
+        document.getElementById('msg').textContent = "";
+        timerInterval = setInterval(timerTick, 1000);
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      restartBtn.style.display = "none";
+      pauseBtn.style.display = "inline-block";
+      startGame();
+    });
+
+    // Initialize on load
+    window.onload = () => {
+      loadHighScore();
+      startBtn.style.display = "inline-block";
+      pauseBtn.style.display = "none";
+      resumeBtn.style.display = "none";
+      restartBtn.style.display = "none";
+
+      // Clear UI
+      document.getElementById('score').textContent = "Score: 0";
+      document.getElementById('level').textContent = "Level: 1";
+      document.getElementById('timer').textContent = "Timer: 0";
+      document.getElementById('shape').style.background = '#fafbff';
+      document.getElementById('buttons').innerHTML = '';
+      document.getElementById('msg').textContent = "Press Start to begin!";
     };
   </script>
 </body>
